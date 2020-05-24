@@ -1,0 +1,17 @@
+{
+  "name": "jss-to-styled-components",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:matthizou/jss-to-styled-components.git",
+  "author": "Matt Izoulet <matthizou@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "babel \"./tests/index.js\" --out-dir . --out-file-extension .es5.js"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/plugin-syntax-jsx": "^7.8.3",
+    "recast": "^0.19.1"
+  }
+}
