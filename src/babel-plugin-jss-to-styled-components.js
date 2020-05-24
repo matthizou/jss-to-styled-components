@@ -19,9 +19,7 @@ module.exports = function (babel) {
             },
           })
         ) {
-          console.log(path.getFunctionParent())
-
-          args.unshift(t.stringLiteral('🍁'))
+          args.unshift(t.stringLiteral('HEY !'))
         }
       },
     },
