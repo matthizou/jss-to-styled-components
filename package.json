@@ -1,6 +1,6 @@
 {
   "name": "jss-to-styled-components",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "src/index.js",
   "repository": "git@github.com:matthizou/jss-to-styled-components.git",
   "author": "Matt Izoulet <matthizou@gmail.com>",
@@ -8,6 +8,12 @@
   "scripts": {
     "start": "node ./src/cli.js -css './assets/360-mini.css' -f './tests/HeaderFooterCard.js' --dry-run -d './tests'",
     "processCss": "node ./src/processCss.js ./assets/360.css"
+  },
+  "bin": {
+    "jss-to-styled-components": "./cli.js",
+    "saronara-jss": "./cli.js",
+    "bye-jss": "./cli.js",
+    "screw-jss": "./cli.js"
   },
   "devDependencies": {
     "eslint": "^7.1.0",
