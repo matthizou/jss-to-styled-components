@@ -6,15 +6,19 @@
   "author": "Matt Izoulet <matthizou@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node ./src/cli.js"
+    "start": "node ./src/cli.js -css './assets/360-mini.css' -f './tests/HeaderFooterCard.js' --dry-run -d './tests'",
+    "processCss": "node ./src/processCss.js ./assets/360.css"
   },
   "devDependencies": {
-    "eslint": "^7.1.0"
+    "eslint": "^7.1.0",
+    "prettier": "^2.0.5"
   },
   "dependencies": {
-    "recast": "^0.19.1",
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.6",
-    "@babel/plugin-syntax-jsx": "^7.8.3"
+    "@babel/plugin-syntax-jsx": "^7.8.3",
+    "css": "^2.2.4",
+    "glob": "^7.1.6",
+    "recast": "^0.19.1"
   }
 }

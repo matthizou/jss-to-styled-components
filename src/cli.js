@@ -4,25 +4,55 @@ const pathLib = require('path')
 const { EOL } = require('os')
 const runBabelPlugin = require('./runBabelPlugin')
 const jssToStyledComponent = require('./babel-plugin-jss-to-styled-components')
+const { processCss } = require('./processCss')
+const { getFiles } = require('./utils/walkRecur')
+var glob = require('glob')
 
 function displayHelp() {
-  console.log(`${EOL}Usage: -f filePath`)
+  console.log(`${EOL}Usage:
+   -f filePath        
+   -d directoryPath   
+   -css cssFilePath   
+   --dry-run          
+   `)
+}
+
+function getDirectoryFiles(path) {
+  return new Promise(resolve => {
+    glob(`./tests/**/*.js`, {}, function (er, files) {
+      resolve(files)
+      // files is an array of filenames.
+      // If the `nonull` option is set, and nothing
+      // was found, then files is ["**/*.js"]
+      // er is an error object or null.
+    })
+  })
 }
 
 const ARGUMENTS = process.argv.slice(2)
 
-;(function () {
-  if (ARGUMENTS.includes('-h')) {
+;(async function () {
+  if (ARGUMENTS.includes('-h') || ARGUMENTS.includes('--help')) {
     displayHelp()
     return false
   }
 
-  let filename
+  let filePath, dirPath, cssPath, findCss
+  let isDryRun = false
   try {
-    ARGUMENTS.filter((value) => value.startsWith('-')).forEach((arg) => {
+    ARGUMENTS.filter(value => value.startsWith('-')).forEach(arg => {
       switch (arg.toLowerCase()) {
+        case '-css':
+          cssPath = getArgumentValue(arg)
+          break
         case '-f':
-          filename = getArgumentValue(arg)
+          filePath = getArgumentValue(arg)
+          break
+        case '-d':
+          dirPath = getArgumentValue(arg)
+          break
+        case '--dry-run':
+          isDryRun = true
           break
       }
     })
@@ -31,15 +61,33 @@ const ARGUMENTS = process.argv.slice(2)
     displayHelp()
     return false
   }
-  if (!filename) {
-    console.log('Missing filename')
+  if (!filePath && !dirPath) {
+    console.log('Missing filename or directory path')
     displayHelp()
     return false
   }
 
+  let files = []
+  if (dirPath) {
+    files = getFiles(dirPath)
+  }
+  if (filePath) {
+    files.push(filePath)
+  }
+
+  if (cssPath) {
+    findCss = processCss({ filePath: cssPath }).findCss
+  }
+
   const cwd = process.cwd()
-  const filePath = pathLib.resolve(cwd, filename)
-  runBabelPlugin(filePath, jssToStyledComponent)
+  files.forEach(path => {
+    console.log(pathLib.resolve(cwd, path))
+    runBabelPlugin({
+      filePath: pathLib.resolve(cwd, path),
+      babelPlugin: jssToStyledComponent,
+      options: { findCss, isDryRun },
+    })
+  })
 })()
 
 function getArgumentValue(optionName) {
