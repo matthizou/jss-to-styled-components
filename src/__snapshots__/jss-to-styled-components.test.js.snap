@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`jssToStyledComponentsPlugin 1. jssToStyledComponentsPlugin: 1. jssToStyledComponentsPlugin 1`] = `
+
+import injectSheet from 'react-jss'
+
+const styles = {
+  card: {
+    borderTopStyle: 'solid',
+    borderTopWidth: '1px',
+    borderColor: '#d1d1d1',
+  },
+  container: {
+    composes: 'cssClass1 cssClass2',
+    marginTop: '8px',
+  },
+}
+
+const HeaderFooterCard = ({ id, className, classes, footer }) => (
+  <section className={classes.container}>
+    <div className={classes.card} data-testid="broccoli">🥦</div>
+    <div className={cn(classes.card, "mb0")}>🍅</div>
+  </section>
+)
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import injectSheet from 'react-jss'
+const Card = styled.div\`
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-color: #d1d1d1;
+\`
+const Container = styled.section.attrs({
+  className: 'cssClass1 cssClass2',
+})\`
+  margin-top: 8px;
+\`
+
+const HeaderFooterCard = ({ id, className, classes, footer }) => (
+  <Container>
+    <Card data-testid="broccoli">🥦</Card>
+    <div className={cn(classes.card, 'mb0')}>🍅</div>
+  </Container>
+)
+
+
+`;

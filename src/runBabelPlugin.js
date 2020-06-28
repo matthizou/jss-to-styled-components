@@ -1,5 +1,6 @@
 const traverse = require('@babel/traverse').default
 const t = require('@babel/types')
+const template = require('@babel/template')
 const { parse, print } = require('recast')
 var fs = require('fs')
 
@@ -9,7 +10,7 @@ function runBabelPlugin({ filePath, babelPlugin, options = {} }) {
     // console.log(`Code source loaded (${source.length} characters)`)
     // console.log('Source:', source)
     const ast = parse(source)
-    traverse(ast, babelPlugin({ types: t }, options).visitor)
+    traverse(ast, babelPlugin({ types: t, template }, options).visitor)
     const { code: output } = print(ast)
     // console.log('\n\n-------------\n')
     // console.log('[Output]\n\n')

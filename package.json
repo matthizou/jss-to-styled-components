@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node ./src/cli.js -css './assets/360-mini.css' -f './tests/HeaderFooterCard.js' --dry-run -d './tests'",
-    "processCss": "node ./src/processCss.js ./assets/360.css"
+    "processCss": "node ./src/processCss.js ./assets/360.css",
+    "test": "jest"
   },
   "bin": {
     "jss-to-styled-components": "./cli.js",
@@ -16,13 +17,18 @@
     "screw-jss": "./cli.js"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.10.1",
+    "babel-plugin-tester": "^9.2.0",
     "eslint": "^7.1.0",
+    "jest": "^26.0.1",
+    "npm": "^6.14.5",
     "prettier": "^2.0.5"
   },
   "dependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.6",
     "@babel/plugin-syntax-jsx": "^7.8.3",
+    "@babel/template": "^7.10.3",
     "css": "^2.2.4",
     "glob": "^7.1.6",
     "recast": "^0.19.1"

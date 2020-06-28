@@ -6,7 +6,6 @@ const runBabelPlugin = require('./runBabelPlugin')
 const jssToStyledComponent = require('./babel-plugin-jss-to-styled-components')
 const { processCss } = require('./processCss')
 const { getFiles } = require('./utils/walkRecur')
-var glob = require('glob')
 
 function displayHelp() {
   console.log(`${EOL}Usage:
@@ -15,18 +14,6 @@ function displayHelp() {
    -css cssFilePath   
    --dry-run          
    `)
-}
-
-function getDirectoryFiles(path) {
-  return new Promise(resolve => {
-    glob(`./tests/**/*.js`, {}, function (er, files) {
-      resolve(files)
-      // files is an array of filenames.
-      // If the `nonull` option is set, and nothing
-      // was found, then files is ["**/*.js"]
-      // er is an error object or null.
-    })
-  })
 }
 
 const ARGUMENTS = process.argv.slice(2)
