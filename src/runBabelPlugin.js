@@ -1,6 +1,6 @@
 const traverse = require('@babel/traverse').default
 const t = require('@babel/types')
-const template = require('@babel/template')
+const template = require('@babel/template').default
 const { parse, print } = require('recast')
 var fs = require('fs')
 

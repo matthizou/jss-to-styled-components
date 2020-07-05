@@ -1,18 +1,6 @@
 const pluginTester = require('babel-plugin-tester').default
-// const identifierReversePlugin = function () {
-//   return {
-//     visitor: {
-//       Identifier(idPath) {
-//         idPath.node.name = idPath.node.name.split('').reverse().join('')
-//       },
-//     },
-//   }
-// }
-
 const jssToStyledComponentsPlugin = require('./babel-plugin-jss-to-styled-components')
 const { processCss } = require('./processCss')
-
-// .default
 
 const findCss = processCss({ filePath: './assets/360-mini.css' }).findCss
 

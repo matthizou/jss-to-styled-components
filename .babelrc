@@ -1,5 +1,5 @@
 {
-  "plugins": ["@babel/syntax-jsx", "./src/jss-to-styled-components.js"],
+  "plugins": ["@babel/syntax-jsx"],
   "parserOpts": {
     "parser": "recast"
   },
