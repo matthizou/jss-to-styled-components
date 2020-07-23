@@ -103,6 +103,7 @@ module.exports = function (babel, options = {}) {
           let componentName, propertyName
           let removeAttribute = false
           if (expression.type === 'CallExpression') {
+            // className={someFunction(.....)}
             const { callee } = expression
             if (cssConcatenationFunctions.includes(callee.name)) {
               // i.e: cn("mt6",classes.container, "mb0")
@@ -145,8 +146,6 @@ module.exports = function (babel, options = {}) {
             path.remove()
           }
 
-          // todo: check if it already exists. If yes, compare tag.
-          // If different, change componentName
           const jssMapping = jssMappings.get(propertyName)
           if (!jssMapping) {
             jssMappings.set(propertyName, { tag, componentName })
