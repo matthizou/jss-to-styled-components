@@ -13,18 +13,20 @@ function displayHelp() {
    -d directoryPath   
    -css cssFilePath   
    --dry-run          
+   --remove-composes-only
    `)
 }
 
 const ARGUMENTS = process.argv.slice(2)
 
 ;(async function () {
-  if (ARGUMENTS.includes('-h') || ARGUMENTS.includes('--help')) {
+  if (ARGUMENTS.includes('-h') || ARGUMENTS.includes('-help')) {
     displayHelp()
     return false
   }
 
   let filePath, dirPath, cssPath, findCss
+  let removeComposesOnly = false
   let isDryRun = false
   try {
     ARGUMENTS.filter(value => value.startsWith('-')).forEach(arg => {
@@ -38,8 +40,11 @@ const ARGUMENTS = process.argv.slice(2)
         case '-d':
           dirPath = getArgumentValue(arg)
           break
-        case '--dry-run':
+        case '-dry-run':
           isDryRun = true
+          break
+        case '-remove-composes-only':
+          removeComposesOnly = true
           break
       }
     })
@@ -72,7 +77,7 @@ const ARGUMENTS = process.argv.slice(2)
     runBabelPlugin({
       filePath: pathLib.resolve(cwd, path),
       babelPlugin: jssToStyledComponent,
-      options: { findCss, isDryRun },
+      options: { findCss, isDryRun, removeComposesOnly },
     })
   })
 })()

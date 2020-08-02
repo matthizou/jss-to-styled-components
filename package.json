@@ -6,7 +6,7 @@
   "author": "Matt Izoulet <matthizou@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node ./src/cli.js --dry-run -css './assets/360-mini.css' -f './tests/HeaderFooterCard.js'",
+    "start": "node ./src/cli.js -css './assets/360-mini.css' -f './tests/HeaderFooterCard.js'",
     "processCss": "node ./src/processCss.js ./assets/360.css",
     "test": "jest"
   },

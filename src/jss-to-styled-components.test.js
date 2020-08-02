@@ -15,7 +15,7 @@ pluginTester({
     {
       code: `
       import injectSheet from 'react-jss'
-      import { color } from "@xingternal/360-styles/helpers"
+      import { color } from "@application-styles/colors"
       const CARD_WIDTH = 240
 
       const styles = {
@@ -28,7 +28,8 @@ pluginTester({
           }
         },
         container: {
-          composes: 'cssClass1 cssClass2',
+          composes:
+          "mx-auto my8 border-top",
           marginTop: 8,
           color: color('gray-60'),
         },
@@ -185,6 +186,55 @@ pluginTester({
     `,
       pluginOptions: {
         findCss,
+      },
+    },
+    // Handling of `composes`
+    {
+      code: `
+      import injectSheet from 'react-jss'
+
+      const styles = {
+        container: {
+          composes:
+          "mx-auto border-gray-15 border-top",
+          marginTop: 8,
+        },
+      }
+
+      const HeaderFooterCard = ({ classes }) => (
+        <section className={classes.container}>
+        🍉
+        </section>
+      )
+    `,
+      pluginOptions: {
+        findCss,
+        cssConcatenationFunctions: ['cn'],
+      },
+    },
+
+    // Handling of `composes`
+    {
+      code: `
+          import injectSheet from 'react-jss'
+
+          const styles = {
+            container: {
+              composes:
+              "mx-auto border-gray-15 border-top",
+              marginTop: 8,
+            },
+          }
+
+          const HeaderFooterCard = ({ classes }) => (
+            <section className={classes.container}>
+            🍉
+            </section>
+          )
+        `,
+      pluginOptions: {
+        findCss,
+        removeComposesOnly: true,
       },
     },
   ],

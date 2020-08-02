@@ -3,7 +3,7 @@
 exports[`jssToStyledComponentsPlugin 1. jssToStyledComponentsPlugin: 1. jssToStyledComponentsPlugin 1`] = `
 
 import injectSheet from 'react-jss'
-import { color } from "@xingternal/360-styles/helpers"
+import { color } from "@application-styles/colors"
 const CARD_WIDTH = 240
 
 const styles = {
@@ -16,7 +16,8 @@ const styles = {
     }
   },
   container: {
-    composes: 'cssClass1 cssClass2',
+    composes:
+    "mx-auto my8 border-top",
     marginTop: 8,
     color: color('gray-60'),
   },
@@ -32,7 +33,7 @@ const HeaderFooterCard = ({ id, className, classes, footer }) => (
       ↓ ↓ ↓ ↓ ↓ ↓
 
 import injectSheet from 'react-jss'
-import { color } from '@xingternal/360-styles/helpers'
+import { color } from '@application-styles/colors'
 const CARD_WIDTH = 240
 const Card = styled.div\`
   border-top-style: solid;
@@ -42,11 +43,15 @@ const Card = styled.div\`
     text-decoration: none;
   }
 \`
-const Container = styled.section.attrs({
-  className: 'cssClass1 cssClass2',
-})\`
+const Container = styled.section\`
   margin-top: 8px;
   color: \${color('gray-60')};
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border-top-style: solid;
+  border-top-width: 1px;
 \`
 
 const HeaderFooterCard = ({ id, className, classes, footer }) => (
@@ -270,6 +275,80 @@ const HeaderFooterCard = ({ classes }) => (
     <Card>🍍</Card>
     <Card as={Text}>🥥</Card>
   </div>
+)
+
+
+`;
+
+exports[`jssToStyledComponentsPlugin 8. jssToStyledComponentsPlugin: 8. jssToStyledComponentsPlugin 1`] = `
+
+import injectSheet from 'react-jss'
+
+const styles = {
+  container: {
+    composes:
+    "mx-auto border-gray-15 border-top",
+    marginTop: 8,
+  },
+}
+
+const HeaderFooterCard = ({ classes }) => (
+  <section className={classes.container}>
+  🍉
+  </section>
+)
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import injectSheet from 'react-jss'
+const Container = styled.section\`
+  margin-top: 8px;
+  margin-left: auto;
+  margin-right: auto;
+  border-color: #d1d1d1;
+  border-top-style: solid;
+  border-top-width: 1px;
+\`
+
+const HeaderFooterCard = ({ classes }) => <Container>🍉</Container>
+
+
+`;
+
+exports[`jssToStyledComponentsPlugin 9. jssToStyledComponentsPlugin: 9. jssToStyledComponentsPlugin 1`] = `
+
+import injectSheet from 'react-jss'
+
+const styles = {
+  container: {
+    composes:
+    "mx-auto border-gray-15 border-top",
+    marginTop: 8,
+  },
+}
+
+const HeaderFooterCard = ({ classes }) => (
+  <section className={classes.container}>
+  🍉
+  </section>
+)
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import injectSheet from 'react-jss'
+const styles = {
+  container: {
+    marginTop: 8,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    borderColor: '#d1d1d1',
+    borderTopStyle: 'solid',
+    borderTopWidth: '1px',
+  },
+}
+
+const HeaderFooterCard = ({ classes }) => (
+  <section className={classes.container}>🍉</section>
 )
 
 

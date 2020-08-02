@@ -9,7 +9,9 @@ function runBabelPlugin({ filePath, babelPlugin, options = {} }) {
     const source = fs.readFileSync(filePath, { encoding: 'utf8' })
     // console.log(`Code source loaded (${source.length} characters)`)
     // console.log('Source:', source)
-    const ast = parse(source)
+    const ast = parse(source, {
+      parser: require('recast/parsers/babel'),
+    })
     traverse(ast, babelPlugin({ types: t, template }, options).visitor)
     const { code: output } = print(ast)
     // console.log('\n\n-------------\n')

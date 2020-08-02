@@ -10,10 +10,12 @@ module.exports = function (babel, options = {}) {
   let jssMappings = new Map()
 
   return {
-    name: 'jss-to-styled-component', // not required
+    name: 'jss-to-styled-component',
     visitor: {
       Program: {
         enter(path) {
+          // Exit if the react-jss import in not in the file
+          //
           const jssImport = path.node.body
             .filter(node => node.type === 'ImportDeclaration')
             .map(node => node.source.value.trim())
@@ -22,7 +24,6 @@ module.exports = function (babel, options = {}) {
 
           styleDeclaration = path.node.body
             .filter(node => node.type === 'VariableDeclaration')
-            //            .map((node) => node.declarations[0])
             .find(
               ({ declarations }) =>
                 declarations[0].id.name === 'styles' &&
@@ -41,21 +42,23 @@ module.exports = function (babel, options = {}) {
               value: { properties: cssClasses },
             } = jssProperty
 
+            const getComposeNode = () =>
+              jssProperty.value.properties.find(
+                node => node.key.name === 'composes'
+              )
             // === Handling `composes` - START
-            const composeNode = cssClasses.find(
-              node => node.key.name === 'composes'
-            )
-            if (
-              composeNode &&
-              (t.isStringLiteral(composeNode.value) ||
-                composeNode.value.type === 'Literal')
-            ) {
+            let composeNode = getComposeNode()
+
+            if (composeNode && isStringNode(composeNode.value)) {
               removeCompose({
                 node: composeNode,
                 parent: jssProperty,
                 t,
                 options,
               })
+            }
+            if (options.removeComposesOnly) {
+              return
             }
             // === Handling `composes` - END
 
@@ -65,9 +68,10 @@ module.exports = function (babel, options = {}) {
 
             const generatedCss = getStyledComponentCss({
               cssClasses,
-              composeNode,
             })
-            // console.log('😺 generatedCss:', generatedCss)
+
+            // Need to relook for `composes`, as it may have been removed previously
+            composeNode = getComposeNode()
 
             const isHTMLTag = /^[a-z]/.test(tag)
             const componentDeclaration = template.ast(
@@ -87,6 +91,11 @@ module.exports = function (babel, options = {}) {
               ...topLevelNodes.slice(jssStyleNodeIndex + index),
             ]
           })
+
+          if (options.removeComposesOnly) {
+            return
+          }
+          // Removes the JSX class definition
           path.node.body = [
             ...path.node.body.slice(0, jssStyleNodeIndex - 1),
             ...path.node.body.slice(jssStyleNodeIndex),
@@ -95,6 +104,10 @@ module.exports = function (babel, options = {}) {
       },
 
       JSXAttribute(path) {
+        if (options.removeComposesOnly) {
+          return
+        }
+
         const { name: nameNode, value: valueNode = {} } = path.node
         const { expression = {} } = valueNode
         // name / value
@@ -150,7 +163,6 @@ module.exports = function (babel, options = {}) {
           if (!jssMapping) {
             jssMappings.set(propertyName, { tag, componentName })
           } else if (jssMapping.tag !== tag) {
-            console.log('🐞 Different tag detected:', tag)
             const isHTMLTag = /^[a-z]/.test(tag)
             if (isHTMLTag) {
               openingElement.attributes.push(
@@ -171,11 +183,10 @@ module.exports = function (babel, options = {}) {
   }
 }
 
-function getStyledComponentCss({ cssClasses, composeNode }) {
+function getStyledComponentCss({ cssClasses }) {
   const generatedCss = cssClasses
-    .filter(node => node !== composeNode)
+    .filter(node => node.key && node.key.name !== 'composes')
     .map(({ key: keyNode, value: valueNode }) => {
-      // todo: key.computed? ===> [someProp]
       let name
       if (keyNode.type === 'Identifier') {
         name = toKebabCase(keyNode.name)
@@ -188,7 +199,6 @@ function getStyledComponentCss({ cssClasses, composeNode }) {
         value = `
           ${getStyledComponentCss({
             cssClasses: valueNode.properties,
-            composeNode,
           }).join(';\n  ')}
         `
         return `${name} {
@@ -225,16 +235,16 @@ function getStyledComponentCss({ cssClasses, composeNode }) {
   return generatedCss
 }
 
+// Analyse each class inside the compose node
+// and replace it by the corresponding css in the JSX class.
 function removeCompose({ node, parent, t, options }) {
   const { value: cssClasses } = node.value
   const { findCss } = options
   const unknownCss = []
-  // console.log('Compose 🐬')
 
   cssClasses.split(' ').forEach(cssClass => {
     const rules = findCss(`.${cssClass}`)
     if (rules) {
-      //
       rules.forEach(rule => {
         const [name, value] = rule
         const newProperty = t.objectProperty(
@@ -247,8 +257,9 @@ function removeCompose({ node, parent, t, options }) {
       unknownCss.push(cssClass)
     }
   })
-  if (!unknownCss.length) {
-    // Remove compose property
+  // console.log('Unknown css in `compose`:', unknownCss)
+  if (unknownCss.length === 0) {
+    // Remove `compose` property
     parent.value.properties = parent.value.properties.filter(
       property => property !== node
     )
