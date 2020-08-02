@@ -1,8 +1,6 @@
 # jss-to-styled-components
 
-🚧 WIP  
 Babel codemod designed to migrate from react-jss to styled-components.
-
 <img src="./assets/jss-to-styled-components.png" />
 
 ## Motivation
@@ -15,6 +13,26 @@ And that could have been the end of the story. The "older" code would live peace
 But what if we could write a script that could do the migration automatically? Looking at what it would take, that seemed like an overwhelming complex task.
 
 Enter Babel, codemods and ASTs.
+
+## Install
+
+- Fork/Clone this repo.
+- Install dependencies
+- From the root, run the CLI
+
+Basic Example:
+
+```
+$ node ./src/cli.js -f 'path/to/your/file.js'
+```
+
+If you use the `composes` property in your Jss, please read the documentation for the options `css` and `remove-composes-only`
+
+Advanced example:
+
+```
+$ node ./src/cli.js -d 'path/to/your/folder' -css 'path/to/your/css/file.css'
+```
 
 ## Options
 
@@ -48,7 +66,7 @@ Enter Babel, codemods and ASTs.
   }
   ```
 
-  But default, it will pass it as `className` to the generated styled-component
+  By default, it will pass it as `className` to the generated styled-component
 
   ```
   const Container = styled.div.attrs({
