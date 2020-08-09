@@ -51,12 +51,13 @@ function walkRecur(fullPath, options = {}, results = []) {
  * @param {Array} options.extensions
  * @param {Array} options.ignoredFolders
  */
-function getFiles(path, { ignoredFolders = IGNORED_FOLDERS } = {}) {
+function getFiles(path, { ignoredFolders = IGNORED_FOLDERS, extensions } = {}) {
   const results = []
   walkRecur(
     path,
     {
       ignoredFolders,
+      extensions,
     },
     results
   )

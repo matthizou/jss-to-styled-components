@@ -61,7 +61,7 @@ const ARGUMENTS = process.argv.slice(2)
 
   let files = []
   if (dirPath) {
-    files = getFiles(dirPath)
+    files = getFiles(dirPath, { extensions: ['.js'] })
   }
   if (filePath) {
     files.push(filePath)

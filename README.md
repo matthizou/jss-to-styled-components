@@ -16,11 +16,12 @@ Enter Babel, codemods and ASTs.
 
 ## Install
 
-- Fork/Clone this repo.
+- Fork/Clone this repo
 - Install dependencies
-- From the root, run the CLI
 
-Basic Example:
+## Run
+
+From the root of this repo, run the CLI
 
 ```
 $ node ./src/cli.js -f 'path/to/your/file.js'
@@ -28,13 +29,62 @@ $ node ./src/cli.js -f 'path/to/your/file.js'
 
 If you use the `composes` property in your Jss, please read the documentation for the options `css` and `remove-composes-only`
 
-Advanced example:
+_Advanced example:_
 
 ```
 $ node ./src/cli.js -d 'path/to/your/folder' -css 'path/to/your/css/file.css'
 ```
 
-## Options
+## Requirements
+
+- The `react-jss` import is present
+- A top-level variable called `styles` hold the JSS classes
+- The JSS injected prop is called `classes`
+- The prop `classes` is only used in `className` attribute of a JSX element
+
+A simple example would be:
+
+```
+  import injectSheet from 'react-jss'
+
+  const styles = {
+    container: {
+      composes: "mx-auto my8",
+      paddingTop: 12,
+      color: "gray",
+    },
+  }
+
+  const UserCard = ({ classes }) => (
+    <section className={classes.container}>🏃🏻‍♂️</section>
+  )
+
+  export default injectSheet(styles)(UserCard)
+```
+
+which would be translated to
+
+```
+  import styled from 'styled-components'
+
+  const Container = styled.section`
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    paddingTop: 12px;
+    color: gray;
+  `
+
+  const UserCard = () => (
+    <Container>🏃🏻‍♂️</Container>
+  )
+```
+
+Many advanced scenarios are supported: Use of `composes`, Css concatenation functions, nested definitions, variables,...
+Deep dive into the [Snapshot files](https://github.com/matthizou/jss-to-styled-components/blob/master/src/__snapshots__/jss-to-styled-components.test.js.snap) to see them.
+
+## CLI Options
 
 - **-h** or **-help**  
   Help
@@ -102,3 +152,12 @@ $ node ./src/cli.js -d 'path/to/your/folder' -css 'path/to/your/css/file.css'
     border-top-width: 1px;
   `
   ```
+
+* **-cssConcatenationFunctions** functions
+  Comma-separated names of the name of the functions used to do the concatenation of css classes, when using packages like `classnames`.  
+  Default to `cn`
+  ```
+    <div className={cn(classes.card, "margin-bottom-10")}>🙋🏻‍♂️</div>
+  ```
+
+# Limitation

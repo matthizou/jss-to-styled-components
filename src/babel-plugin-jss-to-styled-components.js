@@ -4,10 +4,17 @@ const { print } = require('recast')
 
 const INJECTED_JSS_PROP = 'classes'
 
+function findImport({ name, body }) {
+  return body
+    .filter(node => node.type === 'ImportDeclaration')
+    .find(node => node.source.value.trim() === name)
+}
+
 module.exports = function (babel, options = {}) {
   const { types: t, template } = babel
   let styleDeclaration
   let jssMappings = new Map()
+  let jssImport
 
   return {
     name: 'jss-to-styled-component',
@@ -16,10 +23,11 @@ module.exports = function (babel, options = {}) {
         enter(path) {
           // Exit if the react-jss import in not in the file
           //
-          const jssImport = path.node.body
-            .filter(node => node.type === 'ImportDeclaration')
-            .map(node => node.source.value.trim())
-            .find(importName => importName === 'react-jss')
+
+          jssImport = findImport({
+            name: 'react-jss',
+            body: path.node.body,
+          })
           if (!jssImport) return
 
           styleDeclaration = path.node.body
@@ -69,7 +77,6 @@ module.exports = function (babel, options = {}) {
             const generatedCss = getStyledComponentCss({
               cssClasses,
             })
-
             // Need to relook for `composes`, as it may have been removed previously
             composeNode = getComposeNode()
 
@@ -81,7 +88,7 @@ module.exports = function (babel, options = {}) {
                 composeNode
                   ? `.attrs({ className: "${composeNode.value.value}"})`
                   : ''
-              }\`\n  ${generatedCss.join(';\n  ')}\n\``
+              }\`\n  ${generatedCss.join(';\n  ')};\n\``
             )
 
             const topLevelNodes = path.node.body
@@ -90,29 +97,46 @@ module.exports = function (babel, options = {}) {
               componentDeclaration,
               ...topLevelNodes.slice(jssStyleNodeIndex + index),
             ]
+
+            const styledComponentsImport = findImport({
+              name: 'styled-components',
+              body: path.node.body,
+            })
+            if (!styledComponentsImport) {
+              const jssImportIndex = path.node.body.indexOf(jssImport)
+              // Place styled-components import after the react-jss one
+              const styledComponentImport = t.importDeclaration(
+                [t.importDefaultSpecifier(t.identifier('styled'))],
+                t.stringLiteral('styled-components')
+              )
+              path.node.body = [
+                ...path.node.body.slice(0, jssImportIndex),
+                styledComponentImport,
+                ...path.node.body.slice(jssImportIndex),
+              ]
+            }
           })
 
           if (options.removeComposesOnly) {
             return
           }
-          // Removes the JSX class definition
-          path.node.body = [
-            ...path.node.body.slice(0, jssStyleNodeIndex - 1),
-            ...path.node.body.slice(jssStyleNodeIndex),
-          ]
+          // Removes the JSS class definition and import
+          // todo: do only this if all Jss classes have been matched
+          path.node.body = path.node.body.filter(
+            node => node !== jssImport && node !== styleDeclaration
+          )
         },
       },
 
       JSXAttribute(path) {
-        if (options.removeComposesOnly) {
+        if (!styleDeclaration || options.removeComposesOnly) {
           return
         }
-
         const { name: nameNode, value: valueNode = {} } = path.node
-        const { expression = {} } = valueNode
+        const { expression = {} } = valueNode || {}
         // name / value
         if (nameNode.name === 'className') {
-          const { cssConcatenationFunctions = [] } = options
+          const { cssConcatenationFunctions = ['cn'] } = options
           let componentName, propertyName
           let removeAttribute = false
           if (expression.type === 'CallExpression') {
@@ -132,8 +156,18 @@ module.exports = function (babel, options = {}) {
               if (expression.arguments.length === 0) {
                 removeAttribute = true
               }
-              if (expression.arguments.length === 1) {
-                path.node.value = expression.arguments[0]
+              if (
+                expression.arguments.length === 1
+                // && isStringNode(expression.arguments[0])
+              ) {
+                const lastArgument = expression.arguments[0]
+                if (lastArgument.type === 'StringLiteral') {
+                  // i.e: className="margin-top-10"
+                  path.node.value = lastArgument
+                } else if (lastArgument.type === 'Identifier') {
+                  // i.e: className={cssFromProp}
+                  path.node.value.expression = lastArgument
+                }
               }
             }
           } else {
@@ -153,7 +187,9 @@ module.exports = function (babel, options = {}) {
           const { openingElement, closingElement } = jsxElement.node
           const tag = openingElement.name.name
           openingElement.name.name = componentName
-          closingElement.name.name = componentName
+          if (closingElement) {
+            closingElement.name.name = componentName
+          }
 
           if (removeAttribute) {
             path.remove()
@@ -208,7 +244,14 @@ function getStyledComponentCss({ cssClasses }) {
         value = valueNode.value
       } else if (valueNode.type === 'Identifier') {
         value = `$\{${valueNode.name}}`
-      } else if (valueNode.type === 'NumericLiteral') {
+      } else if (
+        valueNode.type === 'NumericLiteral' ||
+        valueNode.type === 'UnaryExpression'
+      ) {
+        value = valueNode.argument ? valueNode.argument.value : valueNode.value
+        if (valueNode.operator === '-') {
+          value = -value
+        }
         const NON_PIXELS_PROPERTIES = [
           'font-weight',
           'flex',
@@ -217,13 +260,14 @@ function getStyledComponentCss({ cssClasses }) {
           'z-index',
           'order',
           'tab-size',
+          'opacity',
         ]
-        if (valueNode.value === 0) {
+        if (value === 0) {
           value = 0
         } else if (NON_PIXELS_PROPERTIES.includes(name)) {
           value = valueNode.value
         } else {
-          value = `${valueNode.value}px`
+          value = `${value}px`
         }
       } else {
         // i.e: CallExpression
