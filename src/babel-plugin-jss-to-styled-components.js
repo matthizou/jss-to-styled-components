@@ -269,6 +269,11 @@ function getStyledComponentCss({ cssClasses }) {
         } else {
           value = `${value}px`
         }
+      } else if (valueNode.type === 'TemplateLiteral') {
+        // As in styled-components the style is already in a template literal,
+        // we just need to remove the ``
+        // Extend this code to handle more comple scenarios (nested template literals)
+        value = print(valueNode).code.replace(/^`/, '').replace(/`$/, '')
       } else {
         // i.e: CallExpression
         value = `$\{${print(valueNode).code}}` //print(valueNode)

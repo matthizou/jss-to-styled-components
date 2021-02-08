@@ -32,17 +32,9 @@ const HeaderFooterCard = ({ id, className, classes, footer }) => (
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import injectSheet from 'react-jss'
+import styled from 'styled-components'
 import { color } from '@application-styles/colors'
 const CARD_WIDTH = 240
-const Card = styled.div\`
-  border-top-style: solid;
-  border-color: #d1d1d1;
-  width: \${CARD_WIDTH};
-  &:hover {
-    text-decoration: none;
-  }
-\`
 const Container = styled.section\`
   margin-top: 8px;
   color: \${color('gray-60')};
@@ -52,6 +44,14 @@ const Container = styled.section\`
   margin-bottom: 8px;
   border-top-style: solid;
   border-top-width: 1px;
+\`
+const Card = styled.div\`
+  border-top-style: solid;
+  border-color: #d1d1d1;
+  width: \${CARD_WIDTH};
+  &:hover {
+    text-decoration: none;
+  }
 \`
 
 const HeaderFooterCard = ({ id, className, classes, footer }) => (
@@ -71,7 +71,7 @@ import injectSheet from 'react-jss'
 const styles = {
   container: {
     marginTop: 8,
-    padding: 4,
+    padding: -4,
     left: 100,
     fontWeight: 400,
     zIndex: 10,
@@ -85,10 +85,10 @@ const HeaderFooterCard = ({ classes }) => (
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import injectSheet from 'react-jss'
+import styled from 'styled-components'
 const Container = styled.section\`
   margin-top: 8px;
-  padding: 4px;
+  padding: -4px;
   left: 100px;
   font-weight: 400;
   z-index: 10;
@@ -121,7 +121,7 @@ const HeaderFooterCard = ({ classes }) => (
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import injectSheet from 'react-jss'
+import styled from 'styled-components'
 import { color } from '@xingternal/360-styles/helpers'
 const CARD_WIDTH = '240px'
 const Container = styled.section\`
@@ -155,7 +155,7 @@ const HeaderFooterCard = ({ classes }) => (
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import injectSheet from 'react-jss'
+import styled from 'styled-components'
 const Container = styled.section\`
   &:hover {
     text-decoration: none;
@@ -179,30 +179,34 @@ const styles = {
   card: {
     marginLeft: 'auto',
     marginRight: 'auto',
+    marginRight: -10,
   },
 }
 
-const HeaderFooterCard = ({ classes }) => (
+const HeaderFooterCard = ({ classes, className }) => (
   <div>
     <div className={cn(classes.card)}>🍌</div>
     <div className={cn("margin-top-10",classes.card)}>🍌🍌</div>
+    <div className={cn(classes.card, className)}>🍌🍌</div>
     <div className={cn("margin-top-10","padding-4", classes.card)}>🍌🍌🍌</div>
   </div>
 )
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import injectSheet from 'react-jss'
+import styled from 'styled-components'
 import cn from 'classnames'
 const Card = styled.div\`
   margin-left: auto;
   margin-right: auto;
+  margin-right: -10px;
 \`
 
-const HeaderFooterCard = ({ classes }) => (
+const HeaderFooterCard = ({ classes, className }) => (
   <div>
     <Card>🍌</Card>
     <Card className="margin-top-10">🍌🍌</Card>
+    <Card className={className}>🍌🍌</Card>
     <Card className={cn('margin-top-10', 'padding-4')}>🍌🍌🍌</Card>
   </div>
 )
@@ -228,7 +232,7 @@ const HeaderFooterCard = ({ classes }) => (
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import injectSheet from 'react-jss'
+import styled from 'styled-components'
 const Card = styled(Text)\`
   padding: 4px;
 \`
@@ -263,7 +267,7 @@ const HeaderFooterCard = ({ classes }) => (
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import injectSheet from 'react-jss'
+import styled from 'styled-components'
 const Card = styled.span\`
   padding: 4px;
 \`
@@ -300,7 +304,7 @@ const HeaderFooterCard = ({ classes }) => (
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import injectSheet from 'react-jss'
+import styled from 'styled-components'
 const Container = styled.section\`
   margin-top: 8px;
   margin-left: auto;

@@ -28,6 +28,8 @@ const ARGUMENTS = process.argv.slice(2)
   let filePath, dirPath, cssPath, findCss
   let removeComposesOnly = false
   let isDryRun = false
+  let cssConcatenationFunctions = undefined
+
   try {
     ARGUMENTS.filter(value => value.startsWith('-')).forEach(arg => {
       switch (arg.toLowerCase()) {
@@ -45,6 +47,9 @@ const ARGUMENTS = process.argv.slice(2)
           break
         case '-remove-composes-only':
           removeComposesOnly = true
+          break
+        case '-cssConcatenationFunctions':
+          cssConcatenationFunctions = getArgumentValue(arg).split(',')
           break
       }
     })
@@ -77,7 +82,12 @@ const ARGUMENTS = process.argv.slice(2)
     runBabelPlugin({
       filePath: pathLib.resolve(cwd, path),
       babelPlugin: jssToStyledComponent,
-      options: { findCss, isDryRun, removeComposesOnly },
+      options: {
+        findCss,
+        isDryRun,
+        removeComposesOnly,
+        cssConcatenationFunctions,
+      },
     })
   })
 })()

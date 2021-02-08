@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`jssToStyledComponentsPlugin 1. jssToStyledComponentsPlugin: 1. jssToStyledComponentsPlugin 1`] = `
+
+import injectSheet from 'react-jss'
+const color = '#EEE'
+const styles = {
+  container: {
+      marginTop: "12px",
+      borderTop: \`1px solid \${color}\`,
+      marginBottom: "-24px",
+    },
+}
+
+const HeaderFooterCard = ({ classes }) => (
+  <section className={classes.container}>🥝 Object values</section>
+)
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import styled from 'styled-components'
+const color = '#EEE'
+const Container = styled.section\`
+  margin-top: 12px;
+  border-top: 1px solid \${color};
+  margin-bottom: -24px;
+\`
+
+const HeaderFooterCard = ({ classes }) => (
+  <Container>🥝 Object values</Container>
+)
+
+
+`;

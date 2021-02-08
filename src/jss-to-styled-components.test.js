@@ -55,7 +55,7 @@ pluginTester({
       const styles = {
         container: {
           marginTop: 8,
-          padding: 4,
+          padding: -4,
           left: 100,
           fontWeight: 400,
           zIndex: 10,
@@ -71,7 +71,7 @@ pluginTester({
         findCss,
       },
     },
-    // Use of variables & functions in jsx classes
+    // Use of variables and functions in jsx classes
     {
       code: `
       import injectSheet from 'react-jss'
@@ -125,13 +125,15 @@ pluginTester({
         card: {
           marginLeft: 'auto',
           marginRight: 'auto',
+          marginRight: -10,
         },
       }
 
-      const HeaderFooterCard = ({ classes }) => (
+      const HeaderFooterCard = ({ classes, className }) => (
         <div>
           <div className={cn(classes.card)}>🍌</div>
           <div className={cn("margin-top-10",classes.card)}>🍌🍌</div>
+          <div className={cn(classes.card, className)}>🍌🍌</div>
           <div className={cn("margin-top-10","padding-4", classes.card)}>🍌🍌🍌</div>
         </div>
       )
