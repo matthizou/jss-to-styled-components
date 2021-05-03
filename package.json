@@ -21,7 +21,7 @@
     "babel-plugin-tester": "^9.2.0",
     "eslint": "^7.1.0",
     "jest": "^26.0.1",
-    "npm": "^6.14.5",
+    "npm": "^6.14.6",
     "prettier": "^2.0.5"
   },
   "dependencies": {
